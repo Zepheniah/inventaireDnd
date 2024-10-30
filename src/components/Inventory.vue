@@ -16,8 +16,10 @@
       :selectedCategory="selectedCategory"
       :colorOptions="colorOptions"
       :selectedColor="selectedColor"
+      :selectedRarity="selectedRarity"
       @selectColorFilter="selectColorFilter"
       @selectItem="openDetailsDrawer"
+      @selectRarityFilter="selectRarityFilter"
       @openDrawer="showDrawer = true"
       @selectCategory="selectCategory"
     />
@@ -81,8 +83,13 @@ export default defineComponent({
   { level: 'Légendaire', color: '#D69E2E' }
   ]);
 
-
-
+  const selectedRarity = ref<String | null>(null);
+  function selectRarityFilter(rarity: string | null) {
+    console.log(rarity);
+    console.log(selectedRarity.value);
+    
+      selectedRarity.value = rarity;
+    }
 
     const inventory = ref<Item[]>([])
 
@@ -94,12 +101,15 @@ export default defineComponent({
       }
     })
 
-
     const filteredInventory = computed(() => {
       return inventory.value.filter(item => {
         const matchesCategory = selectedCategory.value === 'Tout' || item.category === selectedCategory.value;
         const matchesColor = selectedColor.value ? item.color === selectedColor.value : true;
-        return matchesCategory && matchesColor;
+        const matchesRarity = !selectedRarity.value || item.rarity.toString() === selectedRarity.value;
+        console.log(item.rarity, selectedRarity.value);
+        
+        
+        return matchesCategory && matchesColor && matchesRarity;
       });
     });
 
@@ -152,6 +162,7 @@ export default defineComponent({
       categories,
       selectedCategory,
       selectedColor,
+      selectedRarity,
       colorOptions,
       rarityLevels,
       showDrawer,
@@ -161,6 +172,7 @@ export default defineComponent({
       filteredInventory,
       openDetailsDrawer,
       selectCategory,
+      selectRarityFilter,
       selectColorFilter,
       addItem,
       updateItem,

@@ -36,14 +36,14 @@
       v-for="rarity in rarityLevels"
       :key="rarity.level"
       :style="{ backgroundColor: rarity.color }"
-      @click="selectRarityFilter(rarity.level)"
+      @click="$emit('selectRarityFilter', rarity.level)"
       class="py-1 px-3 rounded cursor-pointer text-white"
       :class="{ 'ring-2 ring-yellow-200': selectedRarity === rarity.level }"
     >
       {{ rarity.level }}
     </button>
     <button
-      @click="selectRarityFilter(null)"
+      @click="$emit('selectRarityFilter', null)"
       class="bg-gray-700 text-white py-1 px-3 rounded"
     >
       Réinitialiser le filtre
@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from 'vue'
+import { computed, defineComponent, type PropType, ref } from 'vue'
 
 type Item = {
   id: string;
@@ -125,8 +125,12 @@ export default defineComponent({
       type: String,
       required: false,
     },
+    selectedRarity : {
+      type: String,
+      required: false
+    }
   },
-  emits: ['selectCategory', 'selectItem', 'selectColorFilter', 'openDrawer'],
+  emits: ['selectCategory', 'selectItem', 'selectColorFilter', 'openDrawer', 'selectRarityFilter'],
   setup(props) {
     const rarityLevels = [
       { level: 'Commun', color: '#A0AEC0' },
@@ -136,20 +140,6 @@ export default defineComponent({
       { level: 'Légendaire', color: '#D69E2E' }
     ];
 
-    const selectedRarity = ref<string | null>(null);
-
-    function selectRarityFilter(rarity: string | null) {
-      selectedRarity.value = selectedRarity.level === rarity.valueOf.level ? null : rarity.value.level;
-    }
-
-    // Filtrer l'inventaire par rareté
-    const filteredInventory = computed(() => {
-  return props.inventory.values.filter(item => {
-    const matchesRarity = !selectedRarity.value || item.rarity.level === selectedRarity.value;
-    return matchesRarity;
-  });
-});
-
     // Fonction pour obtenir la couleur en fonction de la rareté
     const getColorByRarity = (rarity: string) => {
       const rarityData = rarityLevels.find(r => r.level === rarity);
@@ -158,9 +148,6 @@ export default defineComponent({
     return {
       rarityLevels,
       getColorByRarity,
-      selectedRarity,
-      selectRarityFilter,
-      filteredInventory
     };
   },
 })
