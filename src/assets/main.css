@@ -1,0 +1,13 @@
+@import './base.css';
+@import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Uncial Antiqua', serif;
+}
+
+body {
+  margin: 0;
+}
